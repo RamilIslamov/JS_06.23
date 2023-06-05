@@ -1,61 +1,123 @@
-function getDistance(x1, y1, x2, y2) {
-  if (arguments.length < 4) {
-    throw new Error('Отсутствует аргумент');
+function makeDeepCopy(obj) {
+  const prohibitedTypes = ['number', 'string', 'boolean', 'symbol', 'bigint'];
+  const type = typeof obj;
+  if (Array.isArray(obj) || obj == null || prohibitedTypes.includes(type)) {
+    throw new Error();
   }
-  for (let i = 0; i < arguments.length; i++) {
-    if (
-      typeof arguments[i] !== 'number' ||
-      arguments[i] < -1000 ||
-      arguments[i] > 1000
+  const copy = {};
+
+  function makeDeepCopyArray(arr) {
+    const copyArr = arr.map((element) => {
+      if (Array.isArray(element)) {
+        return makeDeepCopyArray(element);
+      }
+      if (typeof element === 'object' && !Array.isArray(element)) {
+        return makeDeepCopy(element);
+      } else {
+        return element;
+      }
+    });
+
+    return copyArr;
+  }
+
+  for (let prop in obj) {
+    if (Array.isArray(obj[prop])) {
+      copy[prop] = makeDeepCopyArray(obj[prop]);
+    } else if (obj[prop] instanceof Map) {
+      copy[prop] = new Map();
+      for (let [key, value] of obj[prop]) {
+        if (typeof key === 'object' || (Array.isArray(key) && key !== null)) {
+          copy[prop].set(makeDeepCopy(key), value);
+        } else {
+          copy[prop].set(key, value);
+        }
+      }
+    } else if (obj[prop] instanceof Set) {
+      copy[prop] = new Set([...obj[prop]]);
+    } else if (
+      typeof obj[prop] === 'object' &&
+      obj[prop] !== null &&
+      !Array.isArray(obj[prop])
     ) {
-      throw new Error('Аргумент не соответствует условиям');
+      copy[prop] = makeDeepCopy(obj[prop]);
+    } else {
+      copy[prop] = obj[prop];
     }
   }
-  let distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-
-  if (distance % 1 === 0) {
-    return distance;
-  }
-  return distance.toFixed(2);
+  return copy;
 }
 
-function switchPlaces(arr) {
-  if (!Array.isArray(arr)) {
-    throw new Error('Аргумент не является массивом');
-  }
-  if (arr.length === 0) {
-    return arr;
-  }
-  const middleIndex = arr.length / 2;
-  if (arr.length % 2 === 0) {
-    return arr.slice(middleIndex).concat(arr.slice(0, middleIndex));
-  } else {
-    return arr
-      .slice(middleIndex + 1)
-      .concat(arr.slice(middleIndex, middleIndex + 1))
-      .concat(arr.slice(0, middleIndex));
-  }
-}
-
-function getDivisors(number) {
+function createIterable(from, to) {
   if (
-    typeof number !== 'number' ||
-    !Number.isFinite(number) ||
-    Number.isNaN(number)
+    isNaN(from) ||
+    isNaN(to) ||
+    !isFinite(from) ||
+    !isFinite(to) ||
+    !Number.isInteger(from) ||
+    !Number.isInteger(to) ||
+    typeof from !== 'number' ||
+    typeof to !== 'number' ||
+    to <= from
   ) {
-    throw new Error('Невалидное число');
+    throw new Error();
+  }
+  let currentVal = from;
+
+  return {
+    [Symbol.iterator]: function () {
+      return {
+        next() {
+          if (currentVal <= to) {
+            return { done: false, value: currentVal++ };
+          } else {
+            return { done: true };
+          }
+        },
+      };
+    },
+  };
+}
+
+function createProxy(obj) {
+  if (typeof obj !== 'object' || Array.isArray(obj) || obj == null) {
+    throw new Error();
   }
 
-  if (number <= 0) {
-    throw new Error('Число должно быть положительным');
-  }
+  const objProxyHandler = {
+    get: function (target, prop) {
+      if (prop in target) {
+        if (target[prop] && typeof target[prop] === 'object') {
+          target[prop].readAmount = (target[prop].readAmount || 0) + 1;
+        } else {
+          target[prop] = {
+            value: target[prop],
+            readAmount: 1,
+          };
+        }
+      }
+      return target[prop];
+    },
+    set: function (target, prop, val) {
+      if (!(prop in target)) {
+        target[prop] = {
+          value: val,
+          readAmount: 0,
+        };
+        return true;
+      }
+      if (target[prop] && typeof target[prop] === 'object') {
+        if (typeof val === typeof target[prop].value) {
+          target[prop].value = val;
+        } else {
+          if (typeof val === typeof target[prop]) {
+            target[prop] = { ...target[prop], value: val, readAmount: 0 };
+          }
+        }
+      }
+      return true;
+    },
+  };
 
-  const divisors = [];
-  for (let i = number; i > 0; i--) {
-    if (number % i === 0) {
-      divisors.push(i);
-    }
-  }
-
-  return divisors;
+  return new Proxy(obj, objProxyHandler);
 }
