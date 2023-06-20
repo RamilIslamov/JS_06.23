@@ -1,0 +1,159 @@
+body {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+}
+
+.notes-container {
+  margin-top: 30px;
+}
+
+.main-container {
+  max-width: 80%;
+}
+
+.form-container {
+  margin-top: 30px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-container input,
+.form-container textarea {
+  padding: 10px;
+  font-size: 1em;
+  font-family: 'Roboto', sans-serif;
+  resize: none;
+  border-radius: 5px;
+}
+
+.button {
+  padding: 10px 20px;
+  border: none;
+  background-color: rgb(42, 102, 213);
+  color: white;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1em;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  align-self: center;
+  margin: 5px;
+}
+
+.button:hover {
+  background-color: rgb(30, 77, 160);
+}
+
+.add-button {
+  background-color: rgb(46, 204, 113);
+}
+
+.update-button {
+  background-color: rgb(245, 197, 66);
+  font-size: 0.7rem;
+}
+
+.cancel-button {
+  background-color: rgb(42, 102, 213);
+  font-size: 0.7rem;
+}
+
+.delete-button {
+  background-color: rgb(234, 83, 71);
+  font-size: 0.7rem;
+}
+
+.note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  justify-content: space-between;
+  background-color: rgb(240, 240, 240);
+}
+
+.note-update {
+  flex-direction: column;
+}
+
+.error {
+  border-color: red;
+}
+
+h2 {
+  font-weight: bold;
+  margin: 0;
+}
+
+.date {
+  font-size: 0.8em;
+  margin: 0;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  display: none;
+  background-color: #fefefe;
+  margin: 20% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 40%;
+}
+
+.show {
+  display: block;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.modal-button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  border: none;
+  background-color: rgb(42, 102, 213);
+  color: white;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1em;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.modal-button:hover {
+  background-color: rgb(30, 77, 160);
+}
+
+.inner-input {
+  padding: 5px;
+  font-family: 'Roboto', sans-serif;
+  border-radius: 5px;
+}
+
+.inner-textarea {
+  padding: 5px;
+  font-family: 'Roboto', sans-serif;
+  border-radius: 5px;
+  display: block;
+}
